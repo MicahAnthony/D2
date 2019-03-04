@@ -11,30 +11,42 @@ class Prospector
   end
 
   # Method that allows prospector to mine for rubies/fake-rubies at location
-  def mine(iteration, location, seed)
+  def mine(iteration, location)
     iteration = iteration.to_i
     location = location.to_i
-    seed = seed.to_i
     return nil if iteration < 0 || location < 0 || location > 6
+
     loop do
-      @days_mined += 1;
+      @days_mined += 1
 
       ruby = rand(@chart[location][1] + 1).to_i
       fake_ruby = rand(@chart[location][0] + 1).to_i
 
-      puts "      Found #{ruby} ruby and #{fake_ruby} fake ruby in #{@map[location][0]}." if ruby == 1 && fake_ruby == 1
-      puts "      Found #{ruby} rubies and #{fake_ruby} fake rubies in #{@map[location][0]}." if ruby > 1 && fake_ruby > 1
-      puts "      Found #{ruby} ruby and #{fake_ruby} fake rubies in #{@map[location][0]}." if ruby == 1 && fake_ruby > 1
-      puts "      Found #{ruby} rubies and #{fake_ruby} fake ruby in #{@map[location][0]}." if ruby > 1 && fake_ruby == 1
-      puts "      Found #{ruby} ruby in #{@map[location][0]}." if ruby == 1 && fake_ruby == 0
-      puts "      Found #{ruby} rubies in #{@map[location][0]}." if ruby > 1 && fake_ruby == 0
-      puts "      Found #{fake_ruby} fake ruby in #{@map[location][0]}." if ruby == 0 && fake_ruby == 1
-      puts "      Found #{fake_ruby} fake rubies in #{@map[location][0]}." if ruby == 0 && fake_ruby > 1
+      r_word = if ruby == 1
+                 'ruby'
+               else
+                 'rubies'
+               end
+
+      f_word = if fake_ruby == 1
+                 'fake ruby'
+               else
+                 'fake rubies'
+               end
+
+      puts "      Found #{ruby} #{r_word} and #{fake_ruby} #{f_word}. "
+      "in #{@map[location][0]}." if ruby == 1 && fake_ruby == 1
+      puts "      Found #{ruby} #{r_word} and #{fake_ruby} #{f_word}. "
+      "in #{@map[location][0]}." if ruby > 1 && fake_ruby > 1
+
       @ruby_total += ruby
       @fake_ruby_total += fake_ruby
-      puts "      Found no rubies or fake rubies in #{@map[location][0]}." if ruby.zero? && fake_ruby.zero?
-      break if ruby.zero? && fake_ruby.zero?
+      if ruby.zero? && fake_ruby.zero?
+        puts "      Found no rubies or fake rubies in #{@map[location][0]}."
+        break
+      end
     end
+    1
   end
 
   # Generates random number based on passed in seed
@@ -51,18 +63,18 @@ class Prospector
     seed = seed.to_i
     id = id.to_i
     return nil if current_location < 0 || current_location > 6
+
     range = @map[current_location].length - 1
-    seedAlt = (seed * id)
-    nxt = random_number(seedAlt , range).to_i
+    seed_alt = (seed * id)
+    nxt = random_number(seed_alt, range).to_i
     nxt += 1 if nxt.zero?
     return nil if nxt.nil?
+
     next_loc = @map_finder.get_location_index(@map[current_location][nxt])
     puts "Heading from #{@map[current_location][0]} to #{@map[next_loc][0]}."
     @visited_locations += 1
     next_loc
   end
-
-
 
   # Method that initializes chart with ruby/fake-ruby possibilities
   # Index 0 = fake rubies, Index 1 = rubies
@@ -74,6 +86,7 @@ class Prospector
   def see_results(prospector)
     prospector = prospector.to_i
     return nil if prospector <= 0
+
     puts "After #{@days_mined} days, Rubyist #{prospector} found:"
     if @ruby_total == 1
       puts "      #{@ruby_total} ruby."
@@ -89,9 +102,10 @@ class Prospector
       puts 'Going home victorious!'
     elsif @ruby_total > 0 && @ruby_total < 10
       puts 'Going home sad.'
-    elsif @ruby_total == 0
+    elsif @ruby_total.zero?
       puts 'Going home empty-handed.'
     end
+    1
   end
 end
 # End of class

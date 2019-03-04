@@ -19,6 +19,7 @@ class Simulator
       joe.see_results(x)
       x += 1
     end
+    1
   end
 
   # Sets up the map
@@ -38,14 +39,18 @@ class Simulator
   # Let the Prospecting begin!
   def run_simulation(num_prospector, joe)
     num_prospector = num_prospector.to_i
+    return nil if num_prospector < 0
+
     # Iterate through each turn
+    success = 1
     count = 0
     y = 0
     puts "\nRubyist #{num_prospector} starting in #{@map[y][0]}"
     while count < @num_turns
-      joe.mine(count, y, @seed)
+      joe.mine(count, y)
       count += 1
       y = joe.next_location(y, @seed, num_prospector) unless count >= @num_turns
     end
+    success
   end
 end
