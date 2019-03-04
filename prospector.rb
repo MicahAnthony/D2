@@ -22,29 +22,26 @@ class Prospector
       ruby = rand(@chart[location][1] + 1).to_i
       fake_ruby = rand(@chart[location][0] + 1).to_i
 
-      r_word = if ruby == 1
-                 'ruby'
-               else
-                 'rubies'
-               end
-
-      f_word = if fake_ruby == 1
-                 'fake ruby'
-               else
-                 'fake rubies'
-               end
-
-      puts "      Found #{ruby} #{r_word} and #{fake_ruby} #{f_word}. "
-      "in #{@map[location][0]}." if ruby == 1 && fake_ruby == 1
-      puts "      Found #{ruby} #{r_word} and #{fake_ruby} #{f_word}. "
-      "in #{@map[location][0]}." if ruby > 1 && fake_ruby > 1
-
+      if ruby == 1 && fake_ruby == 1
+        puts "      Found #{ruby} ruby and #{fake_ruby} fake ruby in #{@map[location][0]}."
+      end
+      if ruby > 1 && fake_ruby > 1
+        puts "      Found #{ruby} rubies and #{fake_ruby} fake rubies in #{@map[location][0]}."
+      end
+      if ruby == 1 && fake_ruby > 1
+        puts "      Found #{ruby} ruby and #{fake_ruby} fake rubies in #{@map[location][0]}."
+      end
+      if ruby > 1 && fake_ruby == 1
+        puts "      Found #{ruby} rubies and #{fake_ruby} fake ruby in #{@map[location][0]}."
+      end
+      puts "      Found #{ruby} ruby in #{@map[location][0]}." if ruby == 1 && fake_ruby.zero?
+      puts "      Found #{ruby} rubies in #{@map[location][0]}." if ruby > 1 && fake_ruby.zero?
+      puts "      Found #{fake_ruby} fake ruby in #{@map[location][0]}." if ruby.zero? && fake_ruby == 1
+      puts "      Found #{fake_ruby} fake rubies in #{@map[location][0]}." if ruby.zero? && fake_ruby > 1
       @ruby_total += ruby
       @fake_ruby_total += fake_ruby
-      if ruby.zero? && fake_ruby.zero?
-        puts "      Found no rubies or fake rubies in #{@map[location][0]}."
-        break
-      end
+      puts "      Found no rubies or fake rubies in #{@map[location][0]}." if ruby.zero? && fake_ruby.zero?
+      break if ruby.zero? && fake_ruby.zero?
     end
     1
   end
@@ -65,7 +62,7 @@ class Prospector
     return nil if current_location < 0 || current_location > 6
 
     range = @map[current_location].length - 1
-    seed_alt = (seed * id)
+    seed_alt = (seed * 11) % id
     nxt = random_number(seed_alt, range).to_i
     nxt += 1 if nxt.zero?
     return nil if nxt.nil?
